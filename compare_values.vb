@@ -4,31 +4,44 @@ Sub CheckValues()
     Dim lastRowA As Long, lastRowB As Long
     Dim i As Long, j As Long
     Dim valueA As Double, valueB As Double
+    Dim message As String
     
     'Set the workbooks and worksheets to use
-    Set wbA = Workbooks("WorkbookA.xlsx")
-    Set wbB = Workbooks("WorkbookB.xlsx")
-    Set wsA = wbA.Worksheets("Sheet1")
-    Set wsB = wbB.Worksheets("Sheet1")
+    Set wbA = Workbooks("Bee_International_test.xlsx")
+    Set wbB = Workbooks("sbs_test.xlsx")
+    Set wsA = wbA.ActiveSheet
+    Set wsB = wbB.ActiveSheet
     
-    'Get the last row in each worksheet
-    lastRowA = wsA.Cells(wsA.Rows.Count, "A").End(xlUp).Row
-    lastRowB = wsB.Cells(wsB.Rows.Count, "B").End(xlUp).Row
-    
-    'Loop through each row in column A of Workbook A
-    For i = 1 To lastRowA
-        valueA = wsA.Cells(i, "A").Value 'Get the value in column A of Workbook A
-        
-        'Loop through each row in column B of Workbook B
-        For j = 1 To lastRowB
-            valueB = wsB.Cells(j, "B").Value 'Get the value in column B of Workbook B
+
+
+
+'Get the last row in column B of Workbook B
+    lastRowB = wsB.Cells(10, wsB.Columns.Count).End(xlToLeft).Column
+
+    'Get the value in cell T12 of Workbook A
+    valueA = wsA.Range("T12").Value
+
+'Loop through each column in row 10 of Workbook B
+    For j = 1 To lastRowB
+        'Check if the value in the cell is a number
+        If IsNumeric(wsB.Cells(10, j).Value) Then
+            valueB = wsB.Cells(10, j).Value 'Get the value in row 10 of Workbook B, column j
             
-            'Check if valueA is less than or equal to valueB
-            If valueA <= valueB Then
-                'If it is, highlight the cell in Workbook A
-                wsA.Cells(i, "A").Interior.Color = vbYellow
-                Exit For 'Exit the inner loop
+            'Check if valueB is greater than valueA
+            If valueB > valueA Then
+                'Highlight the cell in Workbook B that is greater than valueA
+                wsB.Cells(10, j).Interior.Color = vbYellow
+                message = "The value in Workbook B, row 10, column " & j & ", is greater than the value in Workbook A, cell T12."
+                MsgBox message 'Display message
+            Else
+                message = "The value in Workbook B, row 10, column " & j & ", is less than or equal to the value in Workbook A, cell T12."
+                MsgBox message 'Display message
             End If
-        Next j 'Go to the next row in Workbook B
-    Next i 'Go to the next row in Workbook A
+        Else
+            'Display message if the value in the cell is not a number
+            message = "The value in Workbook B, row 10, column " & j & ", is not a number."
+            MsgBox message 'Display message
+        End If
+    Next j 'Go to the next column in row 10 of Workbook B
+
 End Sub
